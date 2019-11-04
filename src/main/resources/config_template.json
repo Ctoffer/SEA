@@ -1,0 +1,81 @@
+{
+	"user": {
+		"MÜSLI": {
+			"name": "<username>",
+			"password": "use python for non-human-readable password ''.join([f'{ord(c):03d}' for c in 'password'])"
+		},
+		"Moodle": {
+			"name": "<uername>",
+			"password": "<see MÜSLI/password>"
+		}
+	},
+	"selenium": {
+		"driver": "kind of driver e.g. Chrome",
+		"path": "abs path to driver"
+	},
+	"home": "abs path of main folder like C:\\Users\\<user>\\Documents\\Uni\\WiSe19\\ISW",
+	"metafile": "Organisation.xlsx",
+	"folder": {
+		"exercises": {
+			"main": "Übungsblätter",
+			"sheet": "Übungsblatt_%02d",
+			"submission": "03_Abgabe",
+			"group": {
+				"interNameDivider": "_",
+				"intraNameDivider": "-"
+			},
+			"filename": "%s__%s__%s"
+		}
+	},
+	"excel": {
+		"sheetFormat": "Testat %s",
+		"exercise": {
+			"2": {
+				"Testat": [
+					{
+						"name": "Aufgabe 2.1",
+						"alias": "1"
+					},
+					{
+						"name": "Aufgabe 2.2",
+						"alias": "2"
+					},
+					{
+						"name": "Aufgabe 2.3",
+						"alias": "3"
+					}
+				],
+				"Non-Testat": [
+					{
+						"name": "Aufgabe 2.4",
+						"alias": "4",
+						"credits": "6"
+					}
+				]
+			},
+			"3": {
+				"Testat": [
+					{
+						"name": "Aufgabe 3.1",
+						"alias": "1"
+					},
+					{
+						"name": "Aufgabe 3.2",
+						"alias": "2"
+					},
+					{
+						"name": "Aufgabe 3.3",
+						"alias": "3"
+					}
+				],
+				"Non-Testat": [
+					{
+						"name": "Aufgabe 3.4",
+						"alias": "4",
+						"credits": "6"
+					}
+				]
+			}
+		}
+	}
+}
