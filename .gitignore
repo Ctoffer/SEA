@@ -1,0 +1,8 @@
+
+# Default ignored files
+/.idea/workspace.xml
+/sonarlint/
+/codeStyles/
+/src/main/resources/config.json
+/logs
+/target
