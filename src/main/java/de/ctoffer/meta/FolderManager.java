@@ -3,24 +3,22 @@ package de.ctoffer.meta;
 import de.ctoffer.moodle.Moodle;
 import de.ctoffer.moodle.SubmissionRow;
 import de.ctoffer.util.Config;
+import de.ctoffer.util.Serial;
 
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static java.util.stream.Collectors.reducing;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 public class FolderManager {
     private ExerciseManager exerciseManager;
@@ -51,6 +49,10 @@ public class FolderManager {
             interNameDivider = exerciseConfig.getString("group/interNameDivider");
             intraNameDivider = exerciseConfig.getString("group/intraNameDivider");
             fileNameFormat = exerciseConfig.getString("filename");
+        }
+
+        public Path getSheetFolder(int sheetNr) {
+            return Paths.get(home, mainFolder, String.format(sheetFolderFormat, sheetNr), submissionFolder);
         }
 
         public Map<Integer, String> createGroupFolders(Map<Integer, List<Student>> groups, int sheetNr) {
@@ -117,6 +119,37 @@ public class FolderManager {
         }
 
 
-    }
+        public void savePathsForDownloadedSubmissions(final int sheetNr,
+                                                      final String name,
+                                                      final List<Path> downloadedPaths) throws IOException {
+            final String fileName = String.format("submissionPaths_%s.ser", name);
+            final Path folder = getSheetFolder(sheetNr);
+            Files.createDirectories(folder);
+            final Path submissionPaths = folder.resolve(fileName);
+            final ArrayList<URI> paths = downloadedPaths.stream()
+                    .map(Path::toAbsolutePath)
+                    .map(Path::toUri)
+                    .collect(toCollection(ArrayList::new));
+            Serial.write(submissionPaths.toFile(), paths);
+        }
 
+        public Optional<List<Path>> loadPathsForDownloadedSubmissions(final int sheetNr, final String name) {
+            try {
+                final String fileName = String.format("submissionPaths_%s.ser", name);
+                final Path folder = getSheetFolder(sheetNr);
+                final Path submissionPaths = folder.resolve(fileName);
+                List<URI> absolutePaths = Serial.read(submissionPaths.toFile());
+                return Optional.of(absolutePaths.stream().map(Paths::get).collect(Collectors.toList()));
+            } catch(Exception e) {
+                return Optional.empty();
+            }
+        }
+
+        public void deleteSavedPathsMetadata(final int sheetNr, final String name) throws IOException {
+            final String fileName = String.format("submissionPaths_%s.ser", name);
+            final Path folder = getSheetFolder(sheetNr);
+            final Path submissionPaths = folder.resolve(fileName);
+            Files.delete(submissionPaths);
+        }
+    }
 }

@@ -31,7 +31,7 @@ public class Main {
         InputStream configStream = Main.class.getClassLoader().getResourceAsStream("config.json");
         Config config = new Config(configStream);
         try (DriverCore core = new DriverCore(config.sub("selenium"))) {
-            runMoodleDemo(core, config);
+            //runMoodleDemo(core, config);
         }
     }
 
@@ -41,6 +41,7 @@ public class Main {
         }
     }
 
+    /*
     private static void runMoodleDemo(DriverCore core, Config config) throws IOException {
         JsonObject user = config.getObject("user/Moodle");
         int sheetNr = 3; // TODO make that better parameterized
@@ -53,7 +54,11 @@ public class Main {
 
             try (final Moodle moodle = core.getMoodleInstance().login(user)) {
                 moodle.selectISW();
-                final Function<String, List<SubmissionRow>> extractRow = name -> moodle.selectExerciseByName(name, manager.studentList());
+                final Function<String, List<SubmissionRow>> extractRow = name -> moodle.selectExerciseByName(
+                        name,
+                        manager.studentList(),
+                        console
+                );
                 exercises.forEach(exercise -> rows.put(exercise, extractRow.apply(exercise.getName())));
 
                 final Map<Integer, String> groupFolderNames = folderManager
@@ -82,4 +87,6 @@ public class Main {
                 .map(Exercise::fromJson)
                 .collect(Collectors.toList());
     }
+
+     */
 }

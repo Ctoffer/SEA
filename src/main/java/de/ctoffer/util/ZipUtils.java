@@ -1,5 +1,6 @@
 package de.ctoffer.util;
 
+import de.ctoffer.assistance.context.ConsoleContext;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,8 +23,8 @@ public enum ZipUtils {
         return Files.exists(p) && p.getFileName().toString().endsWith(".zip");
     }
 
-    public static Optional<Path> unzip(Path src) {
-        return new Unzipper(src).run();
+    public static Optional<Path> unzip(Path src, ConsoleContext console) {
+        return new Unzipper(src).run(console);
     }
 }
 
@@ -49,25 +50,27 @@ class Unzipper {
         this.destination = destination;
     }
 
-    public Optional<Path> run() {
+    public Optional<Path> run(final ConsoleContext console) {
         Optional<Path> result = Optional.empty();
         try {
-            logger.debug("Unzip from '{}' to '{}'", source.getFileName(), destination.getFileName());
+            console.output("Unzip from '%s' to '%s'", source.getFileName(), destination.getFileName());
             Files.createDirectories(destination);
 
             try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(source))) {
-                tryLoopUntilNull(zis::getNextEntry, entry -> handleZipEntry(zis, entry));
+                tryLoopUntilNull(zis::getNextEntry, entry -> handleZipEntry(zis, entry, console));
             }
 
             result = Optional.of(destination);
         } catch (IOException ioe) {
-            logger.catching(Level.WARN, ioe);
+            console.error(ioe.getMessage());
         }
 
         return result;
     }
 
-    private void handleZipEntry(final ZipInputStream zis, final ZipEntry zipEntry) throws IOException {
+    private void handleZipEntry(final ZipInputStream zis,
+                                final ZipEntry zipEntry,
+                                final ConsoleContext console) throws IOException {
         final String fileName = zipEntry.getName();
         if (isMacMeta(fileName)) {
             final Path entryPath = destination.resolve(fileName);
@@ -79,7 +82,7 @@ class Unzipper {
                 Files.createDirectories(entryPath.getParent());
                 Files.copy(zis, entryPath, StandardCopyOption.REPLACE_EXISTING);
                 if(ZipUtils.isZip(entryPath)) {
-                    new Unzipper(entryPath).run();
+                    new Unzipper(entryPath).run(console);
                 }
             }
         }

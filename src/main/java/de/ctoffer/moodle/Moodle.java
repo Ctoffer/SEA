@@ -1,5 +1,6 @@
 package de.ctoffer.moodle;
 
+import de.ctoffer.assistance.context.ConsoleContext;
 import de.ctoffer.login.CredentialsAccess;
 import de.ctoffer.meta.Student;
 import org.apache.commons.math3.util.Pair;
@@ -91,18 +92,18 @@ public class Moodle extends CredentialsAccess<Moodle> {
 
     }
 
-    public List<SubmissionRow> selectExerciseByName(String name, List<Student> myStudents) {
+    public List<SubmissionRow> selectExerciseByName(String name, List<Student> myStudents, ConsoleContext console) {
         selectISW();
         clickOnExercise(name);
         sleepNoThrow(3000);
         selectAllSubmissions();
-        System.out.println("Collect rows");
+        console.output("Collect rows");
         Map<Student, Optional<WebElement>> associatedRows = getRowsOfMyStudents(myStudents);
         Map<Boolean, List<Pair<Student, WebElement>>> accessable = new HashMap<>();
         accessable.computeIfAbsent(true, k -> new ArrayList<>());
         accessable.computeIfAbsent(false, k -> new ArrayList<>());
         associatedRows.forEach((student, opt) -> accessable.get(opt.isPresent()).add(Pair.create(student, opt.orElse(null))));
-        System.out.println(String.format("Success: %s, Failure: %s, Total: %s",
+        console.output(String.format("Success: %s, Failure: %s, Total: %s",
                 accessable.get(true).size(),
                 accessable.get(false).size(),
                 myStudents.size())
