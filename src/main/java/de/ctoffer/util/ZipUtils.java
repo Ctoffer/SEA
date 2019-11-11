@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -55,8 +56,9 @@ class Unzipper {
         try {
             console.output("Unzip from '%s' to '%s'", source.getFileName(), destination.getFileName());
             Files.createDirectories(destination);
+            final Charset CP437 = Charset.forName("CP437");
 
-            try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(source))) {
+            try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(source), CP437)) {
                 tryLoopUntilNull(zis::getNextEntry, entry -> handleZipEntry(zis, entry, console));
             }
 
