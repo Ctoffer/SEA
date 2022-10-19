@@ -27,7 +27,7 @@
         <poi.version>4.1.1</poi.version>
         <jsoup.version>1.12.1</jsoup.version>
         <log4j.version>2.12.1</log4j.version>
-        <yaml.version>2.10.0</yaml.version>
+        <yaml.version>2.13.4.1</yaml.version>
         <javafx.version>12</javafx.version>
     </properties>
 
